@@ -41,11 +41,13 @@ spec:
             args:
             - -c
             - |
+              NAMESPACE=dev-sbx-common
               BODY=$(kubectl get pods -o wide| egrep -v "(Running|Complete)")
+              echo $BODY
               sendEmail -f k8s_is_sad_alert@davita.com \
               -t andrew.milam@davita.com \
               -s mmnlb.davita.com:25 \
-              -u " Helllooooo, I am a cronjob with bad [dev-sbx-common] news!" \
+              -u " Helllooooo, I am a cronjob with bad [$NAMESPACE] news!" \
               -m "These are the pods having problems:\n  \n$BODY" \
               -o tls=no
             ports:
