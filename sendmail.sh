@@ -1,6 +1,6 @@
 #! /bin/bash -e
 
-BODY=$(kubectl get po -A -o wide| egrep -v "(Running|Complete)")
+BODY=$(kubectl get pods -o wide)
 sendEmail -f test@davita.com \
 -t andrew.milam@davita.com \
 -s mmnlb.davita.com:25 \
