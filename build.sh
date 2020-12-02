@@ -2,5 +2,5 @@
 
 #!/bin/sh
 
-docker build -t dockerhub.artifactory.davita.com/cwow-grafana/test-email-cronjob:1.1 -f Dockerfile . --no-cache
-docker push dockerhub.artifactory.davita.com/cwow-grafana/test-email-cronjob:1.1
+docker build -t dockerhub.artifactory.davita.com/cwow-grafana/test-email-cronjob:3.1 -f Dockerfile . --no-cache
+docker push dockerhub.artifactory.davita.com/cwow-grafana/test-email-cronjob:3.1
