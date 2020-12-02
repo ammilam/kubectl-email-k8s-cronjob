@@ -41,12 +41,12 @@ spec:
             args:
             - -c
             - |
-              export BODY=$(kubectl get pods -o wide| egrep -v "(Running|Complete)")
+              BODY=$(kubectl get pods -o wide| egrep -v "(Running|Complete)")
               sendEmail -f k8s_is_sad_alert@davita.com \
               -t andrew.milam@davita.com \
               -s mmnlb.davita.com:25 \
-              -u " Helllooooo, I am a cronjob with bad [sea1sbx] GKE news!" \
-              -m "These are the pods having problems:\n  \n${BODY}" \
+              -u " Helllooooo, I am a cronjob with bad [sea1sbx] news!" \
+              -m "These are the pods having problems:\n  \n$BODY" \
               -o tls=no
             ports:
             - containerPort: 25
