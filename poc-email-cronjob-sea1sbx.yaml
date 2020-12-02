@@ -1,0 +1,53 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: bad-pods
+  namespace: cronjob-test
+roleRef:
+  name: view
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+subjects:
+  - name: bad-pods
+    namespace: cronjob-test
+    kind: ServiceAccount
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: bad-pods
+  namespace: cronjob-test
+
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: bad-pods
+  namespace: cronjob-test
+spec:
+  schedule: "0 */2 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          serviceAccountName: bad-pods
+          containers:
+          - name: bad-pods
+            image: dockerhub.artifactory.davita.com/cwow-grafana/kubectl-mail:1.0
+            imagePullPolicy: IfNotPresent
+            command: ['/bin/sh']
+            args:
+            - -c
+            - |
+              export BODY=$(kubectl get pods -o wide| egrep -v "(Running|Complete)")
+              sendEmail -f k8s_is_sad_alert@davita.com \
+              -t andrew.milam@davita.com \
+              -s mmnlb.davita.com:25 \
+              -u " Helllooooo, I am a cronjob with bad [dev-sbx-common] GKE news!" \
+              -m "These are the pods having problems:\n  \n${BODY}" \
+              -o tls=no
+            ports:
+            - containerPort: 25
+          restartPolicy: OnFailure
