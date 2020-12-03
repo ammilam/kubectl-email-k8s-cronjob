@@ -2,51 +2,55 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: bad-pods
-  namespace: cronjob-test
+  name: kubectl-email
+  namespace: default
 roleRef:
   name: view
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
 subjects:
-  - name: bad-pods
-    namespace: cronjob-test
+  - name: kubectl-email
+    namespace: default
     kind: ServiceAccount
 
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: bad-pods
-  namespace: cronjob-test
+  name: kubectl-email
+  namespace: default
 
 ---
 apiVersion: batch/v1beta1
 kind: CronJob
 metadata:
-  name: bad-pods
-  namespace: cronjob-test
+  name: kubectl-email
+  namespace: default
 spec:
   schedule: "0 */2 * * *"
   jobTemplate:
     spec:
       template:
         spec:
-          serviceAccountName: bad-pods
+          serviceAccountName: kubectl-email
           containers:
-          - name: bad-pods
-            image: dockerhub.artifactory.davita.com/cwow-grafana/kubectl-mail:1.0
+          - name: kubectl-email
+            image: ammilam/kubectl-email:1.0
             imagePullPolicy: IfNotPresent
             command: ['/bin/sh']
             args:
             - -c
             - |
+              sleep 5
               CONTEXT=sea1sbx
+              TO_EMAIL= # enter to email here
+              FROM_EMAIL= # enter from email here
+              SMTP_HOST= # enter smtp host and port here
               BODY=$(kubectl get pods -A -o wide| egrep -v "(Running|Complete)")
               echo $BODY
-              sendEmail -f k8s_is_sad_alert@davita.com \
-              -t andrew.milam@davita.com \
-              -s mmnlb.davita.com:25 \
+              sendEmail -f $FROM_EMAIL \
+              -t $TO_EMAIL \
+              -s $SMTP_HOST \
               -u " Helllooooo, I am a cronjob with bad [$CONTEXT] news!" \
               -m "There are some pods having a bit of trouble:\n  \n$BODY" \
               -o tls=no
