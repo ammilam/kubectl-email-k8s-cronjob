@@ -42,7 +42,7 @@ spec:
             - -c
             - |
               sleep 5
-              CONTEXT=sea1sbx
+              CLUSTER= # enter a cluster name here
               TO_EMAIL= # enter to email here
               FROM_EMAIL= # enter from email here
               SMTP_HOST= # enter smtp host and port here
@@ -51,7 +51,7 @@ spec:
               sendEmail -f $FROM_EMAIL \
               -t $TO_EMAIL \
               -s $SMTP_HOST \
-              -u " Helllooooo, I am a cronjob with bad [$CONTEXT] news!" \
+              -u " Helllooooo, I am a cronjob with bad [$CLUSTER] news!" \
               -m "There are some pods having a bit of trouble:\n  \n$BODY" \
               -o tls=no
             ports:
